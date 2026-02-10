@@ -26,11 +26,12 @@
       </div>
 
       <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-        <div class="p-4 border-b border-gray-200 bg-gray-50">
+        <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
           <span class="text-sm font-bold text-gray-500">IMAGE</span>
+          <span class="text-sm text-gray-500">{{ totalImages }} {{ totalImages === 1 ? 'repository' : 'repositories' }}</span>
         </div>
 
-          <div class="p-6 border-b border-gray-200 flex justify-between items-start transition hover:bg-gray-50" v-for="r in filtered" :key="r.name">
+          <div class="p-6 border-b border-gray-200 flex justify-between items-start transition hover:bg-gray-50" v-for="r in repos" :key="r.name">
               <div class="flex gap-4 items-start">
                 <div class="bg-blue-50 text-sky-500 w-10 h-10 rounded-lg flex items-center justify-center font-bold">
                   {{ getRepoInitial(r.name) }}
@@ -58,6 +59,44 @@
           </div>
         </div>
       </div>
+
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="mt-6 flex items-center justify-between">
+        <div class="text-sm text-gray-500">
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, totalImages) }} of {{ totalImages }}
+        </div>
+        <div class="flex gap-2">
+          <button
+            @click="currentPage--"
+            :disabled="currentPage === 1"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition"
+          >
+            Previous
+          </button>
+
+          <button
+            v-for="page in visiblePages"
+            :key="page"
+            @click="currentPage = page"
+            :class="[
+              'px-4 py-2 border rounded-lg transition cursor-pointer',
+              currentPage === page
+                ? 'bg-sky-500 text-white border-sky-500'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+            ]"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            @click="currentPage++"
+            :disabled="currentPage === totalPages"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition"
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </main>
 
     <div id="toast" class="fixed hidden min-w-[250px] bg-gray-800 text-white text-center rounded-lg p-3 z-10 left-1/2 bottom-8 transform -translate-x-1/2 text-sm opacity-0 transition-all duration-300">Copied to clipboard!</div>
@@ -66,10 +105,21 @@
 
 <script setup>
 const q = ref("");
-const { data, pending, error } = await useFetch("/api/repos");
+const currentPage = ref(1);
+const itemsPerPage = 20;
+
+// Fetch data with pagination and search parameters
+const { data, pending, error } = await useFetch("/api/repos", {
+  query: {
+    page: currentPage,
+    limit: itemsPerPage,
+    search: q
+  },
+  watch: [currentPage, q]
+});
 
 const totalImages = computed(() => {
-  return data.value?.repos?.length || 0;
+  return data.value?.pagination?.total || 0;
 });
 
 const totalStorage = computed(() => {
@@ -77,11 +127,12 @@ const totalStorage = computed(() => {
   return repos.reduce((sum, r) => sum + (r.size_bytes || 0), 0);
 });
 
-const filtered = computed(() => {
-  const repos = data.value?.repos || [];
-  const s = q.value.trim().toLowerCase();
-  if (!s) return repos;
-  return repos.filter((r) => r.name.toLowerCase().includes(s));
+const repos = computed(() => data.value?.repos || []);
+const totalPages = computed(() => data.value?.pagination?.totalPages || 1);
+
+// Reset to page 1 when search changes
+watch(q, () => {
+  currentPage.value = 1;
 });
 
 function getRepoInitial(name) {
@@ -113,6 +164,23 @@ function formatDate(dateString) {
     hour12: false
   });
 }
+
+const visiblePages = computed(() => {
+  const pages = [];
+  const maxVisible = 5;
+  let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2));
+  let end = Math.min(totalPages.value, start + maxVisible - 1);
+
+  // Adjust start if we're near the end
+  if (end - start + 1 < maxVisible) {
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
+});
 
 function copyToClipboard(text) {
   navigator.clipboard.writeText(text).then(function() {

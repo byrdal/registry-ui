@@ -208,22 +208,22 @@ docker run -d -p 4000:5000 -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:3.0.
 
 4. Initialize the database:
 ```bash
-DB_PATH="./.data/db/registry.db" node ./scripts/migrate-db.mjs
+NUXT_DB_PATH="./.data/db/registry.db" node ./scripts/migrate-db.mjs
 ```
 
 5. Sync with the registry:
 ```bash
-DB_PATH="./.data/db/registry.db" \
-  REGISTRY_URL="http://localhost:4000" \
+NUXT_DB_PATH="./.data/db/registry.db" \
+  NUXT_REGISTRY_URL="http://localhost:4000" \
   node ./scripts/refresh-registry.mjs
 ```
 
 6. Start the development server:
 ```bash
-DB_PATH="./.data/db/registry.db" \
-  REGISTRY_URL="http://localhost:4000" \
-  REGISTRY_PUBLIC_URL="localhost:4000" \
-  REGISTRY_TITLE="Dev Registry" \
+NUXT_DB_PATH="./.data/db/registry.db" \
+  NUXT_REGISTRY_URL="http://localhost:4000" \
+  NUXT_REGISTRY_PUBLIC_URL="localhost:4000" \
+  NUXT_PUBLIC_REGISTRY_TITLE="Dev Registry" \
   npm run dev
 ```
 

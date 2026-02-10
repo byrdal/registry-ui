@@ -1,24 +1,52 @@
 import { getDb } from "../utils/db";
 
-export default defineEventHandler(() => {
+export default defineEventHandler((event) => {
     const db = getDb();
 
-    // Query to get all repos with their total size (deduplicated by digest)
-    const rows = db
-        .prepare(`
-            SELECT
-                r.name,
-                r.slug,
-                r.updated_at,
-                t.tag,
-                t.created_at,
-                t.digest,
-                t.size_bytes
-            FROM repos r
-            LEFT JOIN tags t ON r.slug = t.repo_slug
-            ORDER BY r.name ASC, t.created_at DESC
-        `)
-        .all();
+    // Get pagination parameters from query
+    const query = getQuery(event);
+    const page = Math.max(1, parseInt(query.page as string) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(query.limit as string) || 20));
+    const search = (query.search as string || "").trim().toLowerCase();
+    const offset = (page - 1) * limit;
+
+    // Get total count of repositories (with optional search filter)
+    let totalCount: number;
+    if (search) {
+        const result = db
+            .prepare("SELECT COUNT(*) as count FROM repos WHERE LOWER(name) LIKE ?")
+            .get(`%${search}%`) as { count: number } | undefined;
+        totalCount = result?.count || 0;
+    } else {
+        const result = db
+            .prepare("SELECT COUNT(*) as count FROM repos")
+            .get() as { count: number } | undefined;
+        totalCount = result?.count || 0;
+    }
+
+    // Query to get paginated repos with their total size (deduplicated by digest)
+    let rowsQuery = `
+        SELECT
+            r.name,
+            r.slug,
+            r.updated_at,
+            t.tag,
+            t.created_at,
+            t.digest,
+            t.size_bytes
+        FROM repos r
+        LEFT JOIN tags t ON r.slug = t.repo_slug
+    `;
+
+    if (search) {
+        rowsQuery += ` WHERE LOWER(r.name) LIKE ?`;
+    }
+
+    rowsQuery += ` ORDER BY r.name ASC, t.created_at DESC`;
+
+    const rows = search
+        ? db.prepare(rowsQuery).all(`%${search}%`)
+        : db.prepare(rowsQuery).all();
 
     // Group the results by repo name, deduplicating size by digest
     const repos: any = {};
@@ -54,10 +82,22 @@ export default defineEventHandler(() => {
     });
 
     // Convert object to array and clean up internal tracking
-    const reposList = Object.values(repos).map((repo: any) => {
+    const allRepos = Object.values(repos).map((repo: any) => {
         const { seenDigests, ...cleanRepo } = repo;
         return cleanRepo;
     });
 
-    return { repos: reposList };
+    // Apply pagination to the grouped results
+    const paginatedRepos = allRepos.slice(offset, offset + limit);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+        repos: paginatedRepos,
+        pagination: {
+            page,
+            limit,
+            total: totalCount,
+            totalPages
+        }
+    };
 });

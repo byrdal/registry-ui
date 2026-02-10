@@ -22,20 +22,21 @@
       <div v-if="pending" class="text-center py-8">Loading…</div>
       <div v-else-if="error" class="text-center py-8 text-red-500">Error: {{ error.message }}</div>
 
-      <div v-else class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Digest</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Platform</th>
-              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-              <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="img in filtered" :key="img.digest || img.tags[0]" class="hover:bg-gray-50">
+      <div v-else>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Digest</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Platform</th>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="img in images" :key="img.digest || img.tags[0]" class="hover:bg-gray-50">
               <td class="px-6 py-4 text-sm font-medium text-gray-900">
                 <div class="flex flex-wrap gap-1">
                   <span v-for="tag in img.tags" :key="tag" class="inline-block px-2 py-0.5 text-xs font-medium rounded bg-sky-100 text-sky-700">{{ tag }}</span>
@@ -62,6 +63,45 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="mt-6 flex items-center justify-between">
+        <div class="text-sm text-gray-500">
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, totalCount) }} of {{ totalCount }}
+        </div>
+        <div class="flex gap-2">
+          <button
+            @click="currentPage--"
+            :disabled="currentPage === 1"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition"
+          >
+            Previous
+          </button>
+
+          <button
+            v-for="page in visiblePages"
+            :key="page"
+            @click="currentPage = page"
+            :class="[
+              'px-4 py-2 border rounded-lg transition cursor-pointer',
+              currentPage === page
+                ? 'bg-sky-500 text-white border-sky-500'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+            ]"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            @click="currentPage++"
+            :disabled="currentPage === totalPages"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+      </div>
     </main>
 
     <div id="toast" class="fixed hidden min-w-[250px] bg-gray-800 text-white text-center rounded-lg p-3 z-10 left-1/2 bottom-8 transform -translate-x-1/2 text-sm opacity-0 transition-all duration-300"></div>
@@ -72,14 +112,44 @@
 const route = useRoute();
 
 const q = ref("");
+const currentPage = ref(1);
+const itemsPerPage = 20;
 const deleting = ref({});
-const { data, pending, error, refresh } = await useFetch(`/api/repos/${encodeURIComponent(route.params.slug)}/tags`);
 
-const filtered = computed(() => {
-  const images = data.value?.images || [];
-  const s = q.value.trim().toLowerCase();
-  if (!s) return images;
-  return images.filter((img) => img.tags.some((t) => t.toLowerCase().includes(s)));
+// Fetch data with pagination and search parameters
+const { data, pending, error, refresh } = await useFetch(`/api/repos/${encodeURIComponent(route.params.slug)}/tags`, {
+  query: {
+    page: currentPage,
+    limit: itemsPerPage,
+    search: q
+  },
+  watch: [currentPage, q]
+});
+
+const images = computed(() => data.value?.images || []);
+const totalCount = computed(() => data.value?.pagination?.total || 0);
+const totalPages = computed(() => data.value?.pagination?.totalPages || 1);
+
+const visiblePages = computed(() => {
+  const pages = [];
+  const maxVisible = 5;
+  let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2));
+  let end = Math.min(totalPages.value, start + maxVisible - 1);
+
+  // Adjust start if we're near the end
+  if (end - start + 1 < maxVisible) {
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
+});
+
+// Reset to page 1 when search changes
+watch(q, () => {
+  currentPage.value = 1;
 });
 
 function formatBytes(n) {
