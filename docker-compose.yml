@@ -5,63 +5,16 @@ services:
   registry:
     image: registry:3.0.0
     environment:
-#      REGISTRY_HTTP_ADDR: ":8080"
       REGISTRY_HTTP_RELATIVEURLS: "true"
       REGISTRY_STORAGE_DELETE_ENABLED: "true"
       REGISTRY_LOG_LEVEL: "warn"
       REGISTRY_LOG_ACCESSLOG_DISABLED: "true"
-    ports:
-      - "4000:5000"
     volumes:
       - ./.data/registry:/var/lib/registry
 
-#  frontend:
-#    image: byrdal/registry-ui:latest
-#    environment:
-#      REGISTRY_URL: http://registry:5000
-#    ports:
-#      - "3000:3000"
-#    volumes:
-#      - ./.data/db:/data
-
-#  registry-ui:
-#    image: joxit/docker-registry-ui:main
-#    environment:
-#      - SINGLE_REGISTRY=true
-#      - REGISTRY_TITLE=Docker Registry UI
-#      - DELETE_IMAGES=true
-#      - SHOW_CONTENT_DIGEST=true
-#      - NGINX_PROXY_PASS_URL=http://registry:8080
-#      - SHOW_CATALOG_NB_TAGS=true
-#      - CATALOG_MIN_BRANCHES=1
-#      - CATALOG_MAX_BRANCHES=1
-#      - TAGLIST_PAGE_SIZE=100
-#      - REGISTRY_SECURED=false
-#      - CATALOG_ELEMENTS_LIMIT=1000
-#    ports:
-#      - "8888:80"
-#
-#  registry-ui-2:
-#    image: quiq/registry-ui
-#    environment:
-#      REGISTRY_HOSTNAME: registry:8080
-#      REGISTRY_INSECURE: true
-#      ACCESS_CONTROL_ANYONE_CAN_DELETE_TAGS: true
-#    ports:
-#      - "8000:8000"
-#    depends_on:
-#      - registry
-
-#  registry-ui-2:
-#    image: konradkleine/docker-registry-frontend:v2
-#    environment:
-#      ENV_DOCKER_REGISTRY_HOST: registry
-#      ENV_DOCKER_REGISTRY_PORT: 8080
-#      ENV_DOCKER_REGISTRY_USE_SSL: "false"
-#      ENV_HTPASSWD_PATH: /auth/htpasswd
-#    ports:
-#      - "8080:80"
-#    volumes:
-#      - ./.data/auth:/auth
-#    depends_on:
-#      - registry
+  frontend:
+    image: byrdal/registry-ui:latest
+    environment:
+      REGISTRY_URL: http://registry:5000
+    ports:
+      - "3000:3000"
