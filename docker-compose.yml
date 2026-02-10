@@ -16,5 +16,6 @@ services:
     image: byrdal/registry-ui:latest
     environment:
       REGISTRY_URL: http://registry:5000
+      REGISTRY_PUBLIC_URL: localhost:5000  # The public URL shown in pull commands
     ports:
       - "3000:3000"

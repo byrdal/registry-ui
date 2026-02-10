@@ -12,7 +12,7 @@ A Nuxt 4 (Vue 3 + TypeScript) full-stack web UI for browsing Docker container re
 # Init database then start dev server (prerequisites: a registry on localhost:4000)
 DB_PATH="./.data/db/registry.db" node ./scripts/migrate-db.mjs
 DB_PATH="./.data/db/registry.db" REGISTRY_URL="http://localhost:4000" node ./scripts/refresh-registry.mjs
-DB_PATH="./.data/db/registry.db" REGISTRY_TITLE="My Registry" npm run dev
+DB_PATH="./.data/db/registry.db" REGISTRY_TITLE="My Registry" REGISTRY_PUBLIC_URL="localhost:4000" npm run dev
 
 # Production build
 npm run build
@@ -26,7 +26,8 @@ There is no test runner or linter configured.
 | Variable | Default | Purpose |
 |---|---|---|
 | `DB_PATH` | `/data/registry.db` | SQLite database file path |
-| `REGISTRY_URL` | `http://registry:5000` | Docker Registry v2 base URL |
+| `REGISTRY_URL` | `http://registry:5000` | Docker Registry v2 base URL (for internal API calls) |
+| `REGISTRY_PUBLIC_URL` | `localhost:5000` | Public-facing registry URL shown in pull commands |
 | `REGISTRY_USERNAME` | (empty) | Optional basic auth username |
 | `REGISTRY_PASSWORD` | (empty) | Optional basic auth password |
 | `REGISTRY_TITLE` | `Registry UI` | Page title shown in the UI |

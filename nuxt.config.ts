@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 const registryUrl = process.env.REGISTRY_URL || "http://registry:5000";
 const registryTitle = process.env.REGISTRY_TITLE || "Registry UI";
+const registryPublicUrl = process.env.REGISTRY_PUBLIC_URL || "localhost:5000";
 export default defineNuxtConfig({
     compatibilityDate: '2026-01-30',
     ssr: true,
@@ -21,7 +22,8 @@ export default defineNuxtConfig({
         registryPassword: process.env.REGISTRY_PASSWORD || "",
         dbPath: process.env.DB_PATH || "/data/registry.db",
         public: {
-            registryTitle: registryTitle
+            registryTitle: registryTitle,
+            registryPublicUrl: registryPublicUrl
         }
     },
     app: {

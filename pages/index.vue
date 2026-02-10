@@ -46,8 +46,8 @@
               </div>
             </div>
           <div class="flex flex-col items-end gap-2">
-            <div class="flex items-center bg-gray-100 border border-gray-300 rounded-lg p-2 gap-3 cursor-pointer hover:border-sky-500 transition" @click="copyToClipboard(`docker pull registry.local/${r.name}:${r.tags[0]}`)">
-              <span class="text-gray-700 text-xs font-mono">{{ `docker pull registry.local/${r.name}:${r.tags[0]}` }}</span>
+            <div class="flex items-center bg-gray-100 border border-gray-300 rounded-lg p-2 gap-3 cursor-pointer hover:border-sky-500 transition" @click="copyToClipboard(`docker pull ${registryPublicUrl}/${r.name}:${r.tags[0]}`)">
+              <span class="text-gray-700 text-xs font-mono">{{ `docker pull ${registryPublicUrl}/${r.name}:${r.tags[0]}` }}</span>
               <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
             </div>
             <div class="flex gap-3 text-xs text-gray-500">
@@ -65,6 +65,9 @@
 </template>
 
 <script setup>
+const config = useRuntimeConfig();
+const registryPublicUrl = config.public.registryPublicUrl;
+
 const q = ref("");
 const { data, pending, error } = await useFetch("/api/repos");
 
