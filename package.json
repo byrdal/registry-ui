@@ -1,0 +1,22 @@
+{
+  "name": "registry-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev --host 0.0.0.0 --port 3000",
+    "build": "nuxt build",
+    "start": "node .output/server/index.mjs",
+    "refresh": "node scripts/refresh-registry.mjs",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "better-sqlite3": "12.6.2",
+    "nuxt": "4.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.1.18",
+    "@types/better-sqlite3": "7.6.13",
+    "@types/node": "25.1.0",
+    "tailwindcss": "4.1.18"
+  }
+}

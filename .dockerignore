@@ -1,0 +1,11 @@
+.data
+.npm
+.nuxt
+.output
+node_modules
+.git
+.github
+*.md
+.gitignore
+.dockerignore
+docker-compose.yml
