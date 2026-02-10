@@ -1,9 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
 
-const registryUrl = process.env.REGISTRY_URL || "http://registry:5000";
-const registryTitle = process.env.REGISTRY_TITLE || "Registry UI";
-const registryPublicUrl = process.env.REGISTRY_PUBLIC_URL || "localhost:5000";
 export default defineNuxtConfig({
     compatibilityDate: '2026-01-30',
     ssr: true,
@@ -16,19 +13,21 @@ export default defineNuxtConfig({
         ],
     },
     runtimeConfig: {
-        // server-only
-        registryUrl: registryUrl,
-        registryUsername: process.env.REGISTRY_USERNAME || "",
-        registryPassword: process.env.REGISTRY_PASSWORD || "",
-        dbPath: process.env.DB_PATH || "/data/registry.db",
+        // Server-only - will be overridden by NUXT_REGISTRY_URL, NUXT_REGISTRY_USERNAME, etc.
+        registryUrl: "http://registry:5000",
+        registryUsername: "",
+        registryPassword: "",
+        dbPath: "/data/registry.db",
+        // Public - available to client-side code
+        // Will be overridden by NUXT_PUBLIC_REGISTRY_TITLE and NUXT_PUBLIC_REGISTRY_PUBLIC_URL
         public: {
-            registryTitle: registryTitle,
-            registryPublicUrl: registryPublicUrl
+            registryTitle: "Registry UI",
+            registryPublicUrl: "localhost:5000"
         }
     },
     app: {
         head: {
-            title: registryTitle
+            title: "Registry UI"  // Static default; use registryTitle in layouts for dynamic title
         }
     }
 });
