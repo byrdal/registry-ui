@@ -14,6 +14,9 @@ DB_PATH="./.data/db/registry.db" node ./scripts/migrate-db.mjs
 DB_PATH="./.data/db/registry.db" REGISTRY_URL="http://localhost:4000" node ./scripts/refresh-registry.mjs
 DB_PATH="./.data/db/registry.db" REGISTRY_TITLE="My Registry" REGISTRY_PUBLIC_URL="localhost:4000" npm run dev
 
+# Seed database with random data (no registry required)
+DB_PATH="./.data/db/registry.db" node ./scripts/seed-db.mjs
+
 # Production build
 npm run build
 npm start   # runs .output/server/index.mjs
@@ -42,6 +45,7 @@ scripts/
   migrate-db.mjs        # Creates tables (idempotent)
   db-schema.mjs          # Schema definition (repos + tags tables)
   refresh-registry.mjs   # Syncs registry → SQLite via Registry API v2
+  seed-db.mjs            # Seeds database with random data for development
 
 server/
   utils/db.ts            # better-sqlite3 singleton (getDb())
