@@ -8,6 +8,7 @@ RUN npm ci
 COPY nuxt.config.ts ./
 COPY pages ./pages
 COPY layouts ./layouts
+COPY public ./public
 COPY server ./server
 COPY scripts ./scripts
 
