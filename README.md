@@ -13,6 +13,8 @@ A modern, lightweight web interface for browsing and managing Docker container r
 - **Automatic synchronization** — Background sync keeps the UI up-to-date with your registry
 - **Multi-platform support** — Handles both single-platform images and multi-architecture manifest lists
 
+![example](example.png)
+
 ## Quick Start with Docker
 
 The easiest way to use Registry UI is with the pre-built Docker image from Docker Hub.
