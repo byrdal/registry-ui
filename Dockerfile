@@ -18,15 +18,19 @@ RUN npm run build
 FROM node:20-alpine AS runtime
 WORKDIR /app
 
-# supercronic
-ADD https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-amd64 /supercronic
-RUN chmod +x /supercronic
+# supercronic (multi-arch)
+ARG TARGETARCH
+RUN wget -q "https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-${TARGETARCH}" -O /supercronic \
+    && chmod +x /supercronic
 
 ENV NODE_ENV=production
 ENV DB_PATH=/data/registry.db
 
 COPY --from=build /app/.output /app/.output
-COPY --from=build /app/node_modules /app/node_modules
+
+# Install only production dependencies (better-sqlite3 native module)
+COPY package* ./
+RUN npm pkg delete scripts.postinstall && npm ci --omit=dev
 
 COPY scripts /app/scripts
 COPY docker/entrypoint.sh /app/entrypoint.sh
