@@ -39,7 +39,7 @@
               <tr v-for="img in images" :key="img.digest || img.tags[0]" class="hover:bg-gray-50">
               <td class="px-6 py-4 text-sm font-medium text-gray-900">
                 <div class="flex flex-wrap gap-1">
-                  <span v-for="tag in img.tags" :key="tag" class="inline-block px-2 py-0.5 text-xs font-medium rounded bg-sky-100 text-sky-700">{{ tag }}</span>
+                  <span v-for="tag in img.tags" :key="tag" class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-700">{{ tag }}</span>
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -15,11 +15,11 @@
       </header>
 
       <div class="grid grid-cols-2 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <div class="bg-white p-6 rounded-lg border border-gray-200 border-l-4 border-l-sky-400 shadow-sm">
           <div class="text-sm text-gray-500 mb-2">Total Images</div>
           <div class="text-3xl font-bold text-gray-900">{{ totalImages }}</div>
         </div>
-        <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <div class="bg-white p-6 rounded-lg border border-gray-200 border-l-4 border-l-violet-400 shadow-sm">
           <div class="text-sm text-gray-500 mb-2">Storage Used</div>
           <div class="text-3xl font-bold text-gray-900">{{ formatBytes(totalStorage) }}</div>
         </div>
@@ -31,18 +31,18 @@
           <span class="text-sm text-gray-500">{{ totalImages }} {{ totalImages === 1 ? 'repository' : 'repositories' }}</span>
         </div>
 
-          <div class="p-6 border-b border-gray-200 flex justify-between items-start transition hover:bg-gray-50" v-for="r in repos" :key="r.name">
+          <div class="p-6 border-b border-gray-200 border-l-4 border-l-transparent flex justify-between items-start transition hover:bg-gray-50 hover:border-l-sky-400" v-for="r in repos" :key="r.name">
               <div class="flex gap-4 items-start">
-                <div class="bg-blue-50 text-sky-500 w-10 h-10 rounded-lg flex items-center justify-center font-bold">
+                <div class="bg-gray-800 text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm shrink-0">
                   {{ getRepoInitial(r.name) }}
                 </div>
                 <div>
-                  <NuxtLink :to="`/repos/${r.slug}`" class="font-bold text-sky-600 hover:text-sky-800 transition">
+                  <NuxtLink :to="`/repos/${r.slug}`" class="font-semibold text-gray-900 hover:text-sky-600 transition">
                     {{ r.name }}
                   </NuxtLink>
                 <div class="flex flex-wrap gap-1 mt-2">
-                  <span class="inline-block px-2 py-0.5 text-xs font-medium rounded bg-sky-100 text-sky-700" v-for="tag in r.tags.slice(0, 10)" :key="tag">{{ tag }}</span>
-                  <span class="inline-block px-2 py-0.5 text-xs font-medium rounded bg-sky-100 text-sky-700" v-if="r.tags.length > 10">...</span>
+                  <span class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-700" v-for="tag in r.tags.slice(0, 10)" :key="tag">{{ tag }}</span>
+                  <span class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-500" v-if="r.tags.length > 10">+{{ r.tags.length - 10 }} more</span>
                 </div>
               </div>
             </div>
@@ -52,9 +52,15 @@
               <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
             </div>
             <div class="flex gap-3 text-xs text-gray-500">
-              <span>Updated {{ formatDate(r.last_tag_created_at) }}</span>
+              <span class="flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                {{ formatDate(r.last_tag_created_at) }}
+              </span>
               <span>•</span>
-              <span>{{ formatBytes(r.size_bytes) }}</span>
+              <span class="flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7M4 7c0-2 1-3 3-3h10c2 0 3 1 3 3M4 7h16"/></svg>
+                {{ formatBytes(r.size_bytes) }}
+              </span>
             </div>
           </div>
         </div>
