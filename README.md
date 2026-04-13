@@ -205,18 +205,18 @@ npm install
 
 3. Start a local registry (optional, for development):
 ```bash
-docker run -d -p 4000:5000 -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:3.0.0
+docker run -d -p 4000:5000 -v ./.data/registry:/var/lib/registry -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:3.0.0
 ```
 
 4. Initialize the database:
 ```bash
-NUXT_DB_PATH="./.data/db/registry.db" node ./scripts/migrate-db.mjs
+DB_PATH="./.data/db/registry.db" node ./scripts/migrate-db.mjs
 ```
 
 5. Sync with the registry:
 ```bash
-NUXT_DB_PATH="./.data/db/registry.db" \
-  NUXT_REGISTRY_URL="http://localhost:4000" \
+DB_PATH="./.data/db/registry.db" \
+  REGISTRY_URL="http://localhost:4000" \
   node ./scripts/refresh-registry.mjs
 ```
 

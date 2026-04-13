@@ -36,5 +36,12 @@ export default defineNuxtConfig({
                 { rel: 'manifest', href: '/site.webmanifest' }
             ],
         }
-    }
+    },
+    ignore: [
+        '.data',
+        '.npm',
+        '.nuxt',
+        '.output',
+        'node_modules'
+    ],
 });
