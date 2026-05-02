@@ -64,7 +64,7 @@ html.dark .border-violet-100 {
   border-color: #4c1d95;
 }
 
-html.dark img[alt="logo"] {
+html.dark .app-logo {
   filter: hue-rotate(180deg) invert(1);
   mix-blend-mode: lighten;
 }

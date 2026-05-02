@@ -1,5 +1,5 @@
 export function useTheme() {
-  const theme = useCookie<'dark' | 'light' | null>('theme', {
+  const theme = useCookie<'dark' | 'light'>('theme', {
     default: () => 'light',
     sameSite: 'lax',
     path: '/',
@@ -12,20 +12,12 @@ export function useTheme() {
     },
   });
 
-  const applyTheme = (value: boolean) => {
-    if (!import.meta.client) return;
-
-    document.documentElement.classList.toggle('dark', value);
-    document.documentElement.dataset.theme = value ? 'dark' : 'light';
-  };
-
   const setTheme = (value: boolean) => {
     theme.value = value ? 'dark' : 'light';
-    applyTheme(value);
   };
 
   const toggleTheme = () => {
-    isDark.value = !isDark.value;
+    setTheme(!isDark.value);
   };
 
   return {
