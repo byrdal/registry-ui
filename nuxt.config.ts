@@ -5,7 +5,7 @@ export default defineNuxtConfig({
     compatibilityDate: '2026-01-30',
     ssr: true,
     css: [
-        '~/assets/css/dark-theme.css'
+        './assets/css/dark-theme.css'
     ],
     nitro: {
         preset: "node-server"
