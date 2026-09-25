@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen bg-gray-50">
+  <div class="flex flex-col h-screen bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
     <main class="flex-1 overflow-y-auto p-8">
       <header class="flex justify-between items-center mb-8">
         <div>
@@ -9,11 +9,11 @@
           <h1 class="font-bold text-xl mt-2">{{ data?.repo }}</h1>
         </div>
         <div class="relative w-96">
-          <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
+          <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400">🔍</span>
           <input
             v-model="q"
             type="text"
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white outline-none transition focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 outline-none transition focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
             placeholder="Search tags…"
           />
         </div>
@@ -23,31 +23,31 @@
       <div v-else-if="error" class="text-center py-8 text-red-500">Error: {{ error.message }}</div>
 
       <div v-else>
-        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden dark:bg-gray-800 dark:border-gray-700">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Digest</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Platform</th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Tags</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Digest</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Platform</th>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Size</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Created</th>
+                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Actions</th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="img in images" :key="img.digest || img.tags[0]" class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm font-medium text-gray-900">
+            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+              <tr v-for="img in images" :key="img.digest || img.tags[0]" class="hover:bg-gray-50 dark:hover:bg-gray-700">
+              <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                 <div class="flex flex-wrap gap-1">
-                  <span v-for="tag in img.tags" :key="tag" class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-700">{{ tag }}</span>
+                  <span v-for="tag in img.tags" :key="tag" class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-300">{{ tag }}</span>
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                 <code class="text-xs">{{ img.digest || "-" }}</code>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ img.platform || "-" }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">{{ formatBytes(img.size_bytes) }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(img.created_at) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ img.platform || "-" }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500 dark:text-gray-400">{{ formatBytes(img.size_bytes) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ formatDate(img.created_at) }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-center">
                 <button
                   v-if="img.digest"
@@ -57,7 +57,7 @@
                 >
                   {{ deleting[img.digest] ? 'Deleting...' : 'Delete' }}
                 </button>
-                <span v-else class="text-gray-400 text-xs">-</span>
+                <span v-else class="text-gray-400 text-xs dark:text-gray-500">-</span>
               </td>
             </tr>
           </tbody>
@@ -66,14 +66,14 @@
 
       <!-- Pagination -->
       <div v-if="totalPages > 1" class="mt-6 flex items-center justify-between">
-        <div class="text-sm text-gray-500">
+        <div class="text-sm text-gray-500 dark:text-gray-400">
           Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, totalCount) }} of {{ totalCount }}
         </div>
         <div class="flex gap-2">
           <button
             @click="currentPage--"
             :disabled="currentPage === 1"
-            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
           >
             Previous
           </button>
@@ -86,7 +86,7 @@
               'px-4 py-2 border rounded-lg transition cursor-pointer',
               currentPage === page
                 ? 'bg-sky-500 text-white border-sky-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700'
             ]"
           >
             {{ page }}
@@ -95,7 +95,7 @@
           <button
             @click="currentPage++"
             :disabled="currentPage === totalPages"
-            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
           >
             Next
           </button>

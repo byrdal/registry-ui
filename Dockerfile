@@ -15,6 +15,9 @@ COPY layouts ./layouts
 COPY public ./public
 COPY server ./server
 COPY scripts ./scripts
+COPY assets ./assets
+COPY components ./components
+COPY composables ./composables
 
 RUN npm run build
 
