@@ -10,13 +10,13 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "better-sqlite3": "12.9.0"
+    "better-sqlite3": "13.0.3"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "4.2.2",
-    "@types/better-sqlite3": "7.6.13",
-    "@types/node": "25.6.0",
-    "nuxt": "4.4.2",
-    "tailwindcss": "4.2.2"
+    "@tailwindcss/vite": "4.3.3",
+    "@types/better-sqlite3": "9.6.0",
+    "@types/node": "25.9.8",
+    "nuxt": "4.5.2",
+    "tailwindcss": "4.3.3"
   }
 }

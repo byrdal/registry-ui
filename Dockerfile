@@ -2,6 +2,9 @@
 FROM node:24-alpine AS build
 WORKDIR /app
 
+# better-sqlite3 has no prebuilt binaries for musl, so it compiles from source
+RUN apk add --no-cache python3 make g++
+
 COPY package* ./
 RUN npm ci
 
@@ -30,7 +33,11 @@ COPY --from=build /app/.output /app/.output
 
 # Install only production dependencies (better-sqlite3 native module)
 COPY package* ./
-RUN npm pkg delete scripts.postinstall && npm ci --omit=dev
+RUN apk add --no-cache --virtual .build-deps python3 make g++ \
+    && npm pkg delete scripts.postinstall \
+    && npm ci --omit=dev \
+    && apk del .build-deps \
+    && rm -rf /root/.cache /root/.npm
 
 COPY scripts /app/scripts
 COPY docker/entrypoint.sh /app/entrypoint.sh
