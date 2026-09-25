@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
     compatibilityDate: '2026-01-30',
     ssr: true,
+    css: ["~/assets/css/main.css"],
     nitro: {
         preset: "node-server"
     },

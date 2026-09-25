@@ -9,6 +9,7 @@ COPY package* ./
 RUN npm ci
 
 COPY nuxt.config.ts ./
+COPY assets ./assets
 COPY pages ./pages
 COPY layouts ./layouts
 COPY public ./public

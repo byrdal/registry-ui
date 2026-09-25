@@ -198,7 +198,3 @@ function copyToClipboard(text) {
   });
 }
 </script>
-
-<style>
-@import "tailwindcss";
-</style>
