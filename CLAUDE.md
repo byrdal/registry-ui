@@ -58,6 +58,10 @@ pages/
   repos/[slug].vue       # Repo detail — images grouped by digest, delete button
 
 layouts/default.vue      # Shared header/wrapper
+
+components/ThemeToggle.vue  # Icon-only light/dark switch (inline SVG, no icon library)
+composables/useTheme.ts     # Theme state in a cookie, so SSR renders the right class
+assets/css/main.css         # Global stylesheet — Tailwind entry + the dark variant
 ```
 
 **Data flow:** `refresh-registry.mjs` → SQLite → Nitro API handlers → `useFetch()` in Vue pages.
@@ -72,11 +76,21 @@ layouts/default.vue      # Shared header/wrapper
 
 **Image deletion:** The repo detail page includes delete buttons for each image. Deletion flow: UI calls DELETE endpoint → server calls Registry API v2 `DELETE /v2/<name>/manifests/<digest>` (returns 202 Accepted) → triggers database refresh → pruning removes deleted entries → UI refreshes. Requires registry to have deletion enabled (`REGISTRY_STORAGE_DELETE_ENABLED=true`). Uses confirmation dialog before deletion and toast notifications for feedback.
 
+**Dark mode:** Class-based, not `prefers-color-scheme`. `assets/css/main.css` declares `@custom-variant dark (&:where(.dark, .dark *))`, which repoints Tailwind's `dark:` variant at a `.dark` class on `<html>`. The choice lives in a `theme` cookie read by `composables/useTheme.ts`, so SSR renders the class on the first response and there is no flash of the wrong theme. Surfaces are `gray-900` for the page and `gray-800` for cards.
+
+Three things to watch when adding dark styles:
+
+- Anything already dark in light mode needs its own `dark:` value, or it disappears against the `gray-800` card. The repo initial avatars hit this exactly.
+- `dark:border-gray-700` sets all four sides and will silently override a `border-l-*` accent. Set the side colour explicitly in the dark variant too.
+- For hover, prefer a translucent white (`dark:hover:bg-white/5` for rows, `/8` for buttons) over the next grey shade. One step down the grey scale is a far bigger perceptual jump at the dark end than at the light end, so `gray-800` to `gray-700` reads about six times louder than `white` to `gray-50`.
+
 ## Key Conventions
 
 - **Package manager:** npm with `save-exact=true`
 - **Styling:** Tailwind CSS 4 via `@tailwindcss/vite` — all styling is utility classes, no component library
-  - Tag badges: sky blue style (`bg-sky-100 text-sky-700 px-2 py-0.5 text-xs font-medium rounded`)
+  - Tailwind is imported from `assets/css/main.css`, registered as a global stylesheet in `nuxt.config.ts`. It must stay global: importing it from a component `<style>` block scopes it to that route's chunk and leaves other routes unstyled.
+  - Tag badges: `border border-sky-100 bg-sky-50 text-sky-700` plus `px-2 py-0.5 text-xs font-mono rounded`
+  - Icons are inline SVG (`fill="none" stroke="currentColor" viewBox="0 0 24 24"`), no icon library
 - **Vue style:** Composition API with `<script setup>`, `ref()`, `computed()`, `useFetch()`
 - **API routes:** Nitro `defineEventHandler()` pattern, params via `getRouterParam()`
 - **Timestamps:** ISO 8601 strings throughout (JS `.toISOString()`, stored as TEXT in SQLite)
@@ -86,7 +100,7 @@ layouts/default.vue      # Shared header/wrapper
 
 ## Docker
 
-Multi-stage Dockerfile (node:20-alpine). Runtime uses supercronic for scheduled refreshes. Entrypoint runs migration → initial refresh → starts cron + Nuxt server. A `docker-compose.yml` provides a local registry on port 4000 for development.
+Multi-stage Dockerfile (node:24-alpine). Runtime uses supercronic for scheduled refreshes. Entrypoint runs migration → initial refresh → starts cron + Nuxt server. A `docker-compose.yml` provides a local registry on port 4000 for development.
 
 ## CI/CD
 
