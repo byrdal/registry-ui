@@ -87,12 +87,16 @@ export default defineEventHandler((event) => {
         return cleanRepo;
     });
 
+    // Sum across every matching repo, not just the page being returned
+    const totalSizeBytes = allRepos.reduce((sum: number, repo: any) => sum + (repo.size_bytes || 0), 0);
+
     // Apply pagination to the grouped results
     const paginatedRepos = allRepos.slice(offset, offset + limit);
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
         repos: paginatedRepos,
+        totalSizeBytes,
         pagination: {
             page,
             limit,

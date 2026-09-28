@@ -128,10 +128,7 @@ const totalImages = computed(() => {
   return data.value?.pagination?.total || 0;
 });
 
-const totalStorage = computed(() => {
-  const repos = data.value?.repos || [];
-  return repos.reduce((sum, r) => sum + (r.size_bytes || 0), 0);
-});
+const totalStorage = computed(() => data.value?.totalSizeBytes || 0);
 
 const repos = computed(() => data.value?.repos || []);
 const totalPages = computed(() => data.value?.pagination?.totalPages || 1);
