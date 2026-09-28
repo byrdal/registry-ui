@@ -36,7 +36,7 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-              <tr v-for="img in images" :key="img.digest || img.tags[0]" class="hover:bg-gray-50 dark:hover:bg-gray-700">
+              <tr v-for="img in images" :key="img.digest || img.tags[0]" class="hover:bg-gray-50 dark:hover:bg-white/5">
               <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                 <div class="flex flex-wrap gap-1">
                   <span v-for="tag in img.tags" :key="tag" class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-300">{{ tag }}</span>
@@ -73,7 +73,7 @@
           <button
             @click="currentPage--"
             :disabled="currentPage === 1"
-            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-white/8"
           >
             Previous
           </button>
@@ -86,7 +86,7 @@
               'px-4 py-2 border rounded-lg transition cursor-pointer',
               currentPage === page
                 ? 'bg-sky-500 text-white border-sky-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-white/8'
             ]"
           >
             {{ page }}
@@ -95,7 +95,7 @@
           <button
             @click="currentPage++"
             :disabled="currentPage === totalPages"
-            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-white/8"
           >
             Next
           </button>
