@@ -28,7 +28,7 @@
       <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden dark:bg-gray-800 dark:border-gray-700">
         <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center dark:bg-gray-900 dark:border-gray-700">
           <span class="text-sm font-bold text-gray-500 dark:text-gray-400">IMAGE</span>
-          <span class="text-sm text-gray-500 dark:text-gray-400">{{ totalImages }} {{ totalImages === 1 ? 'repository' : 'repositories' }}</span>
+          <span class="text-sm text-gray-500 dark:text-gray-400">{{ totalRepos }} {{ totalRepos === 1 ? 'repository' : 'repositories' }}</span>
         </div>
 
           <div class="p-6 border-b border-gray-200 border-l-4 border-l-transparent flex justify-between items-start transition hover:bg-gray-50 hover:border-l-sky-400 dark:border-gray-700 dark:hover:bg-white/5" v-for="r in repos" :key="r.name">
@@ -69,7 +69,7 @@
       <!-- Pagination -->
       <div v-if="totalPages > 1" class="mt-6 flex items-center justify-between">
         <div class="text-sm text-gray-500 dark:text-gray-400">
-          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, totalImages) }} of {{ totalImages }}
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, totalRepos) }} of {{ totalRepos }}
         </div>
         <div class="flex gap-2">
           <button
@@ -105,7 +105,7 @@
       </div>
     </main>
 
-    <div id="toast" class="fixed hidden min-w-[250px] bg-gray-800 text-white text-center rounded-lg p-3 z-10 left-1/2 bottom-8 transform -translate-x-1/2 text-sm opacity-0 transition-all duration-300">Copied to clipboard!</div>
+    <div id="toast" class="fixed left-1/2 bottom-8 -translate-x-1/2 min-w-[250px] rounded-lg p-3 z-10 text-sm text-center text-white bg-gray-900 dark:bg-gray-700 opacity-0 pointer-events-none transition-opacity duration-300">Copied to clipboard!</div>
   </div>
 </template>
 
@@ -124,14 +124,10 @@ const { data, pending, error } = await useFetch("/api/repos", {
   watch: [currentPage, q]
 });
 
-const totalImages = computed(() => {
-  return data.value?.pagination?.total || 0;
-});
+const totalImages = computed(() => data.value?.totalImages || 0);
+const totalRepos = computed(() => data.value?.pagination?.total || 0);
 
-const totalStorage = computed(() => {
-  const repos = data.value?.repos || [];
-  return repos.reduce((sum, r) => sum + (r.size_bytes || 0), 0);
-});
+const totalStorage = computed(() => data.value?.totalSizeBytes || 0);
 
 const repos = computed(() => data.value?.repos || []);
 const totalPages = computed(() => data.value?.pagination?.totalPages || 1);
@@ -188,12 +184,24 @@ const visiblePages = computed(() => {
   return pages;
 });
 
+let toastTimer;
+
+function showToast() {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+
+  toast.classList.remove("opacity-0");
+  toast.classList.add("opacity-100");
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.classList.remove("opacity-100");
+    toast.classList.add("opacity-0");
+  }, 3000);
+}
+
 function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(function() {
-    var toast = document.getElementById("toast");
-    toast.className = "fixed show min-w-[250px] bg-gray-800 text-white text-center rounded-lg p-3 z-10 left-1/2 bottom-8 transform -translate-x-1/2 text-sm opacity-100 transition-all duration-300";
-    setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
-  }, function(err) {
+  navigator.clipboard.writeText(text).then(showToast, function(err) {
     console.error('Async: Could not copy text: ', err);
   });
 }

@@ -59,14 +59,25 @@ export default defineEventHandler((event) => {
                 updated_at: row.updated_at,
                 tags: [],
                 size_bytes: 0,
+                image_count: 0,
                 last_tag_created_at: null,
-                seenDigests: new Set()
+                seenDigests: new Set(),
+                seenImageDigests: new Set()
             };
         }
 
         // Add tag data if it exists
         if (row.tag) {
             repos[repoName].tags.push(row.tag);
+
+            // One image per distinct digest; a tag without a digest cannot be
+            // grouped, so it counts on its own. Matches the detail endpoint.
+            if (!row.digest) {
+                repos[repoName].image_count += 1;
+            } else if (!repos[repoName].seenImageDigests.has(row.digest)) {
+                repos[repoName].seenImageDigests.add(row.digest);
+                repos[repoName].image_count += 1;
+            }
         }
 
         // Track the most recent tag creation time (rows are ordered by created_at DESC)
@@ -83,9 +94,13 @@ export default defineEventHandler((event) => {
 
     // Convert object to array and clean up internal tracking
     const allRepos = Object.values(repos).map((repo: any) => {
-        const { seenDigests, ...cleanRepo } = repo;
+        const { seenDigests, seenImageDigests, ...cleanRepo } = repo;
         return cleanRepo;
     });
+
+    // Sum across every matching repo, not just the page being returned
+    const totalSizeBytes = allRepos.reduce((sum: number, repo: any) => sum + (repo.size_bytes || 0), 0);
+    const totalImages = allRepos.reduce((sum: number, repo: any) => sum + (repo.image_count || 0), 0);
 
     // Apply pagination to the grouped results
     const paginatedRepos = allRepos.slice(offset, offset + limit);
@@ -93,6 +108,8 @@ export default defineEventHandler((event) => {
 
     return {
         repos: paginatedRepos,
+        totalImages,
+        totalSizeBytes,
         pagination: {
             page,
             limit,
