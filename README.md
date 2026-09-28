@@ -12,6 +12,7 @@ A modern, lightweight web interface for browsing and managing Docker container r
 - **Copy pull commands** — One-click copy of `docker pull` commands with the correct registry URL
 - **Automatic synchronization** — Background sync keeps the UI up-to-date with your registry
 - **Multi-platform support** — Handles both single-platform images and multi-architecture manifest lists
+- **Dark mode support** - Switch between light or dark mode
 
 ![example](example.png)
 
