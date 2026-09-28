@@ -279,8 +279,9 @@ The UI never directly modifies the registry data — it only reads from it and s
 
 ## License
 
-MIT
+[MIT](LICENSE)
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for running the project
+locally, what to check before opening a pull request, and the conventions to follow.
