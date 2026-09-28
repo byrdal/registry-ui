@@ -41,8 +41,8 @@
                     {{ r.name }}
                   </NuxtLink>
                 <div class="flex flex-wrap gap-1 mt-2">
-                  <span class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-300" v-for="tag in r.tags.slice(0, 10)" :key="tag">{{ tag }}</span>
-                  <span class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-500 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-300" v-if="r.tags.length > 10">+{{ r.tags.length - 10 }} more</span>
+                  <span class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-sky-100 bg-sky-50 text-sky-700 dark:border-sky-400/15 dark:bg-sky-400/8 dark:text-sky-300" v-for="tag in r.tags.slice(0, 10)" :key="tag">{{ tag }}</span>
+                  <span class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-sky-100 bg-sky-50 text-sky-700 dark:border-sky-400/15 dark:bg-sky-400/8 dark:text-sky-300" v-if="r.tags.length > 10">+{{ r.tags.length - 10 }} more</span>
                 </div>
               </div>
             </div>
