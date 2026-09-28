@@ -28,7 +28,7 @@
       <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden dark:bg-gray-800 dark:border-gray-700">
         <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center dark:bg-gray-900 dark:border-gray-700">
           <span class="text-sm font-bold text-gray-500 dark:text-gray-400">IMAGE</span>
-          <span class="text-sm text-gray-500 dark:text-gray-400">{{ totalImages }} {{ totalImages === 1 ? 'repository' : 'repositories' }}</span>
+          <span class="text-sm text-gray-500 dark:text-gray-400">{{ totalRepos }} {{ totalRepos === 1 ? 'repository' : 'repositories' }}</span>
         </div>
 
           <div class="p-6 border-b border-gray-200 border-l-4 border-l-transparent flex justify-between items-start transition hover:bg-gray-50 hover:border-l-sky-400 dark:border-gray-700 dark:hover:bg-white/5" v-for="r in repos" :key="r.name">
@@ -69,7 +69,7 @@
       <!-- Pagination -->
       <div v-if="totalPages > 1" class="mt-6 flex items-center justify-between">
         <div class="text-sm text-gray-500 dark:text-gray-400">
-          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, totalImages) }} of {{ totalImages }}
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, totalRepos) }} of {{ totalRepos }}
         </div>
         <div class="flex gap-2">
           <button
@@ -124,9 +124,8 @@ const { data, pending, error } = await useFetch("/api/repos", {
   watch: [currentPage, q]
 });
 
-const totalImages = computed(() => {
-  return data.value?.pagination?.total || 0;
-});
+const totalImages = computed(() => data.value?.totalImages || 0);
+const totalRepos = computed(() => data.value?.pagination?.total || 0);
 
 const totalStorage = computed(() => data.value?.totalSizeBytes || 0);
 
