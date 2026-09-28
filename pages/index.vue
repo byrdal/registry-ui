@@ -105,7 +105,7 @@
       </div>
     </main>
 
-    <div id="toast" class="fixed hidden min-w-[250px] bg-gray-800 text-white text-center rounded-lg p-3 z-10 left-1/2 bottom-8 transform -translate-x-1/2 text-sm opacity-0 transition-all duration-300">Copied to clipboard!</div>
+    <div id="toast" class="fixed left-1/2 bottom-8 -translate-x-1/2 min-w-[250px] rounded-lg p-3 z-10 text-sm text-center text-white bg-gray-900 dark:bg-gray-700 opacity-0 pointer-events-none transition-opacity duration-300">Copied to clipboard!</div>
   </div>
 </template>
 
@@ -184,12 +184,24 @@ const visiblePages = computed(() => {
   return pages;
 });
 
+let toastTimer;
+
+function showToast() {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+
+  toast.classList.remove("opacity-0");
+  toast.classList.add("opacity-100");
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.classList.remove("opacity-100");
+    toast.classList.add("opacity-0");
+  }, 3000);
+}
+
 function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(function() {
-    var toast = document.getElementById("toast");
-    toast.className = "fixed show min-w-[250px] bg-gray-800 text-white text-center rounded-lg p-3 z-10 left-1/2 bottom-8 transform -translate-x-1/2 text-sm opacity-100 transition-all duration-300";
-    setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
-  }, function(err) {
+  navigator.clipboard.writeText(text).then(showToast, function(err) {
     console.error('Async: Could not copy text: ', err);
   });
 }
