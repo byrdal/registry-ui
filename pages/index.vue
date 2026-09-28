@@ -1,57 +1,57 @@
 <template>
-  <div class="flex flex-col h-screen bg-gray-50">
+  <div class="flex flex-col h-screen bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
     <main class="flex-1 overflow-y-auto p-8">
       <header class="flex justify-between items-center mb-8">
         <h1 class="font-bold text-xl">Repositories</h1>
         <div class="relative w-96">
-          <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
+          <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-400">🔍</span>
           <input
             v-model="q"
             type="text"
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white outline-none transition focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 outline-none transition focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
             placeholder="Search images (e.g., node, nginx). .."
           />
         </div>
       </header>
 
       <div class="grid grid-cols-2 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-lg border border-gray-200 border-l-4 border-l-sky-400 shadow-sm">
-          <div class="text-sm text-gray-500 mb-2">Total Images</div>
-          <div class="text-3xl font-bold text-gray-900">{{ totalImages }}</div>
+        <div class="bg-white p-6 rounded-lg border border-gray-200 border-l-4 border-l-sky-400 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+          <div class="text-sm text-gray-500 mb-2 dark:text-gray-400">Total Images</div>
+          <div class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ totalImages }}</div>
         </div>
-        <div class="bg-white p-6 rounded-lg border border-gray-200 border-l-4 border-l-violet-400 shadow-sm">
-          <div class="text-sm text-gray-500 mb-2">Storage Used</div>
-          <div class="text-3xl font-bold text-gray-900">{{ formatBytes(totalStorage) }}</div>
+        <div class="bg-white p-6 rounded-lg border border-gray-200 border-l-4 border-l-violet-400 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+          <div class="text-sm text-gray-500 mb-2 dark:text-gray-400">Storage Used</div>
+          <div class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ formatBytes(totalStorage) }}</div>
         </div>
       </div>
 
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-        <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-          <span class="text-sm font-bold text-gray-500">IMAGE</span>
-          <span class="text-sm text-gray-500">{{ totalImages }} {{ totalImages === 1 ? 'repository' : 'repositories' }}</span>
+      <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden dark:bg-gray-800 dark:border-gray-700">
+        <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center dark:bg-gray-900 dark:border-gray-700">
+          <span class="text-sm font-bold text-gray-500 dark:text-gray-400">IMAGE</span>
+          <span class="text-sm text-gray-500 dark:text-gray-400">{{ totalImages }} {{ totalImages === 1 ? 'repository' : 'repositories' }}</span>
         </div>
 
-          <div class="p-6 border-b border-gray-200 border-l-4 border-l-transparent flex justify-between items-start transition hover:bg-gray-50 hover:border-l-sky-400" v-for="r in repos" :key="r.name">
+          <div class="p-6 border-b border-gray-200 border-l-4 border-l-transparent flex justify-between items-start transition hover:bg-gray-50 hover:border-l-sky-400 dark:border-gray-700 dark:hover:bg-gray-700" v-for="r in repos" :key="r.name">
               <div class="flex gap-4 items-start">
                 <div class="bg-gray-800 text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm shrink-0">
                   {{ getRepoInitial(r.name) }}
                 </div>
                 <div>
-                  <NuxtLink :to="`/repos/${r.slug}`" class="font-semibold text-gray-900 hover:text-sky-600 transition">
+                  <NuxtLink :to="`/repos/${r.slug}`" class="font-semibold text-gray-900 hover:text-sky-600 transition dark:text-gray-100">
                     {{ r.name }}
                   </NuxtLink>
                 <div class="flex flex-wrap gap-1 mt-2">
-                  <span class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-700" v-for="tag in r.tags.slice(0, 10)" :key="tag">{{ tag }}</span>
-                  <span class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-500" v-if="r.tags.length > 10">+{{ r.tags.length - 10 }} more</span>
+                  <span class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-300" v-for="tag in r.tags.slice(0, 10)" :key="tag">{{ tag }}</span>
+                  <span class="inline-block px-2 py-0.5 text-xs font-mono rounded border border-violet-100 bg-violet-50 text-violet-500 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-300" v-if="r.tags.length > 10">+{{ r.tags.length - 10 }} more</span>
                 </div>
               </div>
             </div>
           <div class="flex flex-col items-end gap-2">
-            <div class="flex items-center bg-gray-100 border border-gray-300 rounded-lg p-2 gap-3 cursor-pointer hover:border-sky-500 transition" @click="copyToClipboard(`docker pull ${$config.public.registryPublicUrl}/${r.name}:${r.tags[0]}`)">
-              <span class="text-gray-700 text-xs font-mono">{{ `docker pull ${$config.public.registryPublicUrl}/${r.name}:${r.tags[0]}` }}</span>
-              <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            <div class="flex items-center bg-gray-100 border border-gray-300 rounded-lg p-2 gap-3 cursor-pointer hover:border-sky-500 transition dark:bg-gray-700 dark:border-gray-600" @click="copyToClipboard(`docker pull ${$config.public.registryPublicUrl}/${r.name}:${r.tags[0]}`)">
+              <span class="text-gray-700 text-xs font-mono dark:text-gray-200">{{ `docker pull ${$config.public.registryPublicUrl}/${r.name}:${r.tags[0]}` }}</span>
+              <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
             </div>
-            <div class="flex gap-3 text-xs text-gray-500">
+            <div class="flex gap-3 text-xs text-gray-500 dark:text-gray-400">
               <span class="flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 {{ formatDate(r.last_tag_created_at) }}
@@ -68,14 +68,14 @@
 
       <!-- Pagination -->
       <div v-if="totalPages > 1" class="mt-6 flex items-center justify-between">
-        <div class="text-sm text-gray-500">
+        <div class="text-sm text-gray-500 dark:text-gray-400">
           Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, totalImages) }} of {{ totalImages }}
         </div>
         <div class="flex gap-2">
           <button
             @click="currentPage--"
             :disabled="currentPage === 1"
-            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
           >
             Previous
           </button>
@@ -88,7 +88,7 @@
               'px-4 py-2 border rounded-lg transition cursor-pointer',
               currentPage === page
                 ? 'bg-sky-500 text-white border-sky-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700'
             ]"
           >
             {{ page }}
@@ -97,7 +97,7 @@
           <button
             @click="currentPage++"
             :disabled="currentPage === totalPages"
-            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
           >
             Next
           </button>
