@@ -3,7 +3,7 @@
     <main class="flex-1 overflow-y-auto p-8">
       <header class="flex justify-between items-center mb-8">
         <div>
-          <NuxtLink to="/" class="flex items-center text-sky-600 hover:text-sky-800 transition">
+          <NuxtLink to="/" class="flex items-center text-sky-600 hover:text-sky-800 transition dark:text-sky-400 dark:hover:text-sky-300">
             ← Back
           </NuxtLink>
           <h1 class="font-bold text-xl mt-2">{{ data?.repo }}</h1>
@@ -53,7 +53,7 @@
                   v-if="img.digest"
                   @click="deleteImage(img)"
                   :disabled="deleting[img.digest]"
-                  class="text-red-600 hover:text-red-800 disabled:text-gray-400 disabled:cursor-not-allowed transition text-xs font-medium cursor-pointer"
+                  class="text-red-600 hover:text-red-800 disabled:text-gray-400 dark:text-red-400 dark:hover:text-red-300 disabled:cursor-not-allowed transition text-xs font-medium cursor-pointer"
                 >
                   {{ deleting[img.digest] ? 'Deleting...' : 'Delete' }}
                 </button>

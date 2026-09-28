@@ -37,7 +37,7 @@
                   {{ getRepoInitial(r.name) }}
                 </div>
                 <div>
-                  <NuxtLink :to="`/repos/${r.slug}`" class="font-semibold text-gray-900 hover:text-sky-600 transition dark:text-gray-100">
+                  <NuxtLink :to="`/repos/${r.slug}`" class="font-semibold text-gray-900 hover:text-sky-600 transition dark:text-gray-100 dark:hover:text-sky-400">
                     {{ r.name }}
                   </NuxtLink>
                 <div class="flex flex-wrap gap-1 mt-2">
