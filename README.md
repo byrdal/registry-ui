@@ -175,7 +175,7 @@ Click on any repository name to view:
 2. Navigate to a repository detail page
 3. Click the delete button for any image
 4. Confirm the deletion
-5. The registry will be automatically refreshed
+5. The image is removed from the list straight away
 
 **Note:** Deletion removes the manifest. To reclaim disk space, you must also run garbage collection on the registry:
 
@@ -266,7 +266,7 @@ registry-ui/
 1. **Background Sync**: A cron job (or manual script) periodically fetches metadata from the Docker Registry API v2 and stores it in a local SQLite database
 2. **API Layer**: Nuxt server API routes query the database and provide REST endpoints
 3. **Frontend**: Vue 3 pages consume the API endpoints using `useFetch()` and display the data
-4. **Deletion**: When you delete an image, the UI calls the registry's delete API, then triggers a refresh to update the database
+4. **Deletion**: When you delete an image, the UI calls the registry's delete API, then removes that digest's tags from the database
 
 The UI never directly modifies the registry data — it only reads from it and sends delete commands when requested.
 
