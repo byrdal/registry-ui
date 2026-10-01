@@ -20,4 +20,9 @@ CREATE TABLE IF NOT EXISTS tags (
 );
 
 CREATE INDEX IF NOT EXISTS idx_tags_repo ON tags(repo_slug);
+
+CREATE TABLE IF NOT EXISTS meta (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
 `;

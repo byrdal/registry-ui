@@ -266,6 +266,9 @@ async function main() {
     const deletedRepos = db.prepare("DELETE FROM repos WHERE updated_at < ?").run(ts);
 
     console.log(`[refresh] pruned ${deletedTags.changes} stale tags, ${deletedRepos.changes} stale repos`);
+
+    db.prepare("INSERT INTO meta (key, value) VALUES ('last_sync_at', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value")
+        .run(new Date().toISOString());
     console.log("[refresh] done");
 }
 

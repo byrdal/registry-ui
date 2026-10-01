@@ -17,16 +17,9 @@ async function main() {
     
     const db = openDb();
     
-    // Check if the schema already exists by looking for tables
-    const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
-    
-    if (tables.length === 0) {
-        console.log("[migrate] creating schema...");
-        db.exec(schemaSql);
-        console.log("[migrate] schema created successfully");
-    } else {
-        console.log("[migrate] schema already exists, skipping");
-    }
+    // Every statement is IF NOT EXISTS, so this also adds new tables to existing databases
+    db.exec(schemaSql);
+    console.log("[migrate] schema up to date");
     
     db.close();
 }
