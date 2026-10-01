@@ -145,6 +145,7 @@ function main() {
   });
 
   insertAll();
+  db.prepare("INSERT INTO meta (key, value) VALUES ('last_sync_at', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(ts);
 
   console.log(`[seed] inserted ${REPOS.length} repos, ${totalTags} tags into ${DB_PATH}`);
   db.close();

@@ -3,6 +3,20 @@ import { useTheme } from '~/composables/useTheme';
 
 const config = useRuntimeConfig();
 const { isDark } = useTheme();
+const { data: sync } = await useFetch('/api/sync');
+
+const lastSync = computed(() => {
+  if (!sync.value?.lastSyncAt) return 'Never';
+  return new Date(sync.value.lastSyncAt).toLocaleDateString('en-GB', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+});
 
 useHead(() => ({
   htmlAttrs: {
@@ -25,5 +39,9 @@ useHead({
     </header>
 
     <slot />
+
+    <footer class="bg-white border-t border-gray-200 px-4 py-2 text-xs text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+      Last registry sync: {{ lastSync }}
+    </footer>
   </div>
 </template>

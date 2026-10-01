@@ -251,6 +251,7 @@ registry-ui/
 │   ├── utils/db.ts           # Database connection singleton
 │   └── api/                  # Nitro API routes
 │       ├── repos.get.ts      # List all repositories
+│       ├── sync.get.ts       # Last registry sync time
 │       └── repos/[slug]/
 │           ├── tags.get.ts   # Get repository images
 │           └── tags/[digest].delete.ts  # Delete image

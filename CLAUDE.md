@@ -43,13 +43,14 @@ There is no test runner or linter configured.
 ```
 scripts/
   migrate-db.mjs        # Creates tables (idempotent)
-  db-schema.mjs          # Schema definition (repos + tags tables)
+  db-schema.mjs          # Schema definition (repos, tags, meta tables)
   refresh-registry.mjs   # Syncs registry → SQLite via Registry API v2
   seed-db.mjs            # Seeds database with random data for development
 
 server/
   utils/db.ts            # better-sqlite3 singleton (getDb())
   api/repos.get.ts       # GET /api/repos — all repos with tags, sizes, last update
+  api/sync.get.ts        # GET /api/sync — when the last registry sync completed (footer)
   api/repos/[slug]/tags.get.ts           # GET /api/repos/:slug/images
   api/repos/[slug]/tags/[digest].delete.ts  # DELETE /api/repos/:slug/tags/:digest
 
@@ -66,7 +67,7 @@ assets/css/main.css         # Global stylesheet — Tailwind entry + the dark va
 
 **Data flow:** `refresh-registry.mjs` → SQLite → Nitro API handlers → `useFetch()` in Vue pages.
 
-**Database:** SQLite via `better-sqlite3` in WAL mode. Two tables: `repos` (name, slug, updated_at) and `tags` (digest, media_type, size_bytes, platform, created_at, last_seen_at). Keyed by `(repo_slug, tag)` with UPSERT on conflict.
+**Database:** SQLite via `better-sqlite3` in WAL mode. Tables: `repos` (name, slug, updated_at) and `tags` (digest, media_type, size_bytes, platform, created_at, last_seen_at). Keyed by `(repo_slug, tag)` with UPSERT on conflict. A key/value `meta` table holds `last_sync_at`, written when a refresh completes. `migrate-db.mjs` runs the whole `IF NOT EXISTS` schema on every start, so new tables reach existing databases.
 
 **Registry refresh:** Fetches the catalog, then for each repo/tag: HEAD for digest, GET for manifest body, GET for config blob. Handles both single-image manifests and manifest lists/OCI indexes. Filters out non-image entries (attestations, SBOMs) by checking `platform.os === "unknown"` and media type. Uses track-and-prune: updates timestamps for all entries found, then deletes entries with old timestamps (repos where `updated_at < current_sync_time` and tags where `last_seen_at < current_sync_time`). This ensures deleted/removed images don't linger in the database.
 
