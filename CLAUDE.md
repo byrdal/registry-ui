@@ -12,7 +12,7 @@ A Nuxt 4 (Vue 3 + TypeScript) full-stack web UI for browsing Docker container re
 # Init database then start dev server (prerequisites: a registry on localhost:4000)
 DB_PATH="./.data/db/registry.db" node ./scripts/migrate-db.mjs
 DB_PATH="./.data/db/registry.db" REGISTRY_URL="http://localhost:4000" node ./scripts/refresh-registry.mjs
-NUXT_DB_PATH="./.data/db/registry.db" NUXT_PUBLIC_REGISTRY_TITLE="My Registry" NUXT_PUBLIC_REGISTRY_PUBLIC_URL="localhost:4000" npm run dev
+NUXT_DB_PATH="./.data/db/registry.db" NUXT_REGISTRY_URL="http://localhost:4000" NUXT_PUBLIC_REGISTRY_TITLE="My Registry" NUXT_PUBLIC_REGISTRY_PUBLIC_URL="localhost:4000" npm run dev
 
 # Seed database with random data (no registry required)
 DB_PATH="./.data/db/registry.db" node ./scripts/seed-db.mjs
@@ -74,7 +74,7 @@ assets/css/main.css         # Global stylesheet — Tailwind entry + the dark va
 
 **Storage calculation:** Disk usage is calculated on-demand at the API level by deduplicating sizes by digest. Tags pointing to the same image are only counted once. Total storage and per-repo storage are displayed on the dashboard.
 
-**Image deletion:** The repo detail page includes delete buttons for each image. Deletion flow: UI calls DELETE endpoint → server calls Registry API v2 `DELETE /v2/<name>/manifests/<digest>` (returns 202 Accepted) → triggers database refresh → pruning removes deleted entries → UI refreshes. Requires registry to have deletion enabled (`REGISTRY_STORAGE_DELETE_ENABLED=true`). Uses confirmation dialog before deletion and toast notifications for feedback.
+**Image deletion:** The repo detail page includes delete buttons for each image. Deletion flow: UI calls DELETE endpoint → server calls Registry API v2 `DELETE /v2/<name>/manifests/<digest>` (returns 202 Accepted) → server deletes that digest's rows from `tags` → UI refreshes. No full sync runs; the cron refresh reconciles anything else. Requires registry to have deletion enabled (`REGISTRY_STORAGE_DELETE_ENABLED=true`). Uses confirmation dialog before deletion and toast notifications for feedback.
 
 **Dark mode:** Class-based, not `prefers-color-scheme`. `assets/css/main.css` declares `@custom-variant dark (&:where(.dark, .dark *))`, which repoints Tailwind's `dark:` variant at a `.dark` class on `<html>`. The choice lives in a `theme` cookie read by `composables/useTheme.ts`, so SSR renders the class on the first response and there is no flash of the wrong theme. Surfaces are `gray-900` for the page and `gray-800` for cards.
 

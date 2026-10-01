@@ -1,5 +1,4 @@
 import { getDb } from "#server/utils/db";
-import { execSync } from "node:child_process";
 
 export default defineEventHandler(async (event) => {
     const repoSlug = decodeURIComponent(getRouterParam(event, "slug") || "");
@@ -28,10 +27,11 @@ export default defineEventHandler(async (event) => {
 
     const repoName = repoRow.name;
 
-    // Get registry configuration from environment
-    const registryUrl = process.env.REGISTRY_URL || "http://registry:5000";
-    const username = process.env.REGISTRY_USERNAME || "";
-    const password = process.env.REGISTRY_PASSWORD || "";
+    const {
+        registryUrl,
+        registryUsername: username,
+        registryPassword: password
+    } = useRuntimeConfig(event);
 
     // Build auth headers if credentials are provided
     const headers: Record<string, string> = {};
@@ -66,23 +66,8 @@ export default defineEventHandler(async (event) => {
             });
         }
 
-        // Successful deletion (202 Accepted)
-        // Now refresh the database to remove the deleted entries
-        const dbPath = process.env.DB_PATH || "/data/registry.db";
-
-        try {
-            // Run the refresh script to sync the database
-            execSync(
-                `DB_PATH="${dbPath}" REGISTRY_URL="${registryUrl}" REGISTRY_USERNAME="${username}" REGISTRY_PASSWORD="${password}" node scripts/refresh-registry.mjs`,
-                {
-                    cwd: process.cwd(),
-                    stdio: 'pipe'
-                }
-            );
-        } catch (refreshError: any) {
-            console.error("Database refresh failed after deletion:", refreshError.message);
-            // Don't fail the request - deletion succeeded, just log the refresh error
-        }
+        // Successful deletion (202 Accepted): drop the tags pointing at this digest
+        db.prepare("DELETE FROM tags WHERE repo_slug = ? AND digest = ?").run(repoSlug, digest);
 
         return {
             success: true,
