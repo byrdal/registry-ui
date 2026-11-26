@@ -1,5 +1,5 @@
 # Build stage
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app
 
 # better-sqlite3 has no prebuilt binaries for musl, so it compiles from source
@@ -22,7 +22,7 @@ COPY composables ./composables
 RUN npm run build
 
 # Runtime stage
-FROM node:24-alpine AS runtime
+FROM node:26-alpine AS runtime
 WORKDIR /app
 
 # supercronic (multi-arch)
